@@ -1,0 +1,39 @@
+# File structure version
+version: '3'
+
+services:
+  # Database application
+  db:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+
+  # Ruby on Rails application
+  web:
+    build:
+      context: .
+      dockerfile: ./deploy/docker/app/Dockerfile
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/opt/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  # # Node application
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./deploy/docker/node/Dockerfile
+  #   command: npm start
+  #   volumes:
+  #     - .:/opt/app
+
+  # # Nginx application
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   ports:
+  #     - 8000:80
+  #   volumes:
